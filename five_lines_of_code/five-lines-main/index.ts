@@ -122,14 +122,7 @@ function handleInputs() {
 }
 
 function handleInput(input: Input) {
-  if (input.isLeftPressed())
-    moveHorizontal(-1);
-  else if (input.isRightPressed())
-    moveHorizontal(1);
-  else if (input.isUpPressed())
-    moveVertical(-1);
-  else if (input.isDownPressed())
-    moveVertical(1);
+  input.handle();
 }
 
 function updateMap() {
