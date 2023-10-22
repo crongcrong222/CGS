@@ -14,8 +14,43 @@ enum Tile {
   KEY2, LOCK2
 }
 
-enum Input {
+enum RawInput {
   UP, DOWN, LEFT, RIGHT
+}
+
+interface Input {
+  isRightPressed(): boolean;
+  isLeftPressed(): boolean;
+  isUpPressed(): boolean;
+  isDownPressed(): boolean;
+}
+
+class Right implements Input {
+  isRightPressed() { return true; }
+  isLeftPressed() { return false; }
+  isUpPressed() { return false; }
+  isDownPressed() { return false; }
+}
+
+class Left implements Input {
+  isRightPressed() { return false; }
+  isLeftPressed() { return true; }
+  isUpPressed() { return false; }
+  isDownPressed() { return false; }
+}
+
+class Up implements Input {
+  isRightPressed() { return false; }
+  isLeftPressed() { return false; }
+  isUpPressed() { return true; }
+  isDownPressed() { return false; }
+}
+
+class Down implements Input {
+  isRightPressed() { return false; }
+  isLeftPressed() { return false; }
+  isUpPressed() { return false; }
+  isDownPressed() { return true; }
 }
 
 let playerx = 1;
@@ -94,13 +129,13 @@ function handleInputs() {
 }
 
 function handleInput(input: Input) {
-  if (input === Input.LEFT)
+  if (input.isLeftPressed())
     moveHorizontal(-1);
-  else if (input === Input.RIGHT)
+  else if (input.isRightPressed())
     moveHorizontal(1);
-  else if (input === Input.UP)
+  else if (input.isUpPressed())
     moveVertical(-1);
-  else if (input === Input.DOWN)
+  else if (input.isDownPressed())
     moveVertical(1);
 }
 
@@ -188,9 +223,9 @@ const UP_KEY = "ArrowUp";
 const RIGHT_KEY = "ArrowRight";
 const DOWN_KEY = "ArrowDown";
 window.addEventListener("keydown", e => {
-  if (e.key === LEFT_KEY || e.key === "a") inputs.push(Input.LEFT);
-  else if (e.key === UP_KEY || e.key === "w") inputs.push(Input.UP);
-  else if (e.key === RIGHT_KEY || e.key === "d") inputs.push(Input.RIGHT);
-  else if (e.key === DOWN_KEY || e.key === "s") inputs.push(Input.DOWN);
+  if (e.key === LEFT_KEY || e.key === "a") inputs.push(new Left());
+  else if (e.key === UP_KEY || e.key === "w") inputs.push(new Up());
+  else if (e.key === RIGHT_KEY || e.key === "d") inputs.push(new Right());
+  else if (e.key === DOWN_KEY || e.key === "s") inputs.push(new Down());
 });
 
