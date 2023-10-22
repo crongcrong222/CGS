@@ -23,54 +23,26 @@ interface Input {
 }
 
 class Right implements Input {
-  handleInput() {
-    if (false)
-      moveHorizontal(-1);
-    else if (true)
-      moveHorizontal(1);
-    else if (false)
-      moveVertical(-1);
-    else if (false)
-      moveVertical(1);
+  handle() {
+    moveHorizontal(1);
   }
 }
 
 class Left implements Input {
-  handleInput() {
-    if (true)
-      moveHorizontal(-1);
-    else if (false)
-      moveHorizontal(1);
-    else if (false)
-      moveVertical(-1);
-    else if (false)
-      moveVertical(1);
+  handle() {
+    moveHorizontal(-1);
   }
 }
 
 class Up implements Input {
-  handleInput() {
-    if (false)
-      moveHorizontal(-1);
-    else if (false)
-      moveHorizontal(1);
-    else if (true)
-      moveVertical(-1);
-    else if (false)
-      moveVertical(1);
+  handle() {
+    moveVertical(-1);
   }
 }
 
 class Down implements Input {
-  handleInput() {
-    if (false)
-      moveHorizontal(-1);
-    else if (false)
-      moveHorizontal(1);
-    else if (false)
-      moveVertical(-1);
-    else if (true)
-      moveVertical(1);
+  handle() {
+    moveVertical(1);
   }
 }
 
