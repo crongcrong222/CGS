@@ -19,38 +19,59 @@ enum RawInput {
 }
 
 interface Input {
-  isRightPressed(): boolean;
-  isLeftPressed(): boolean;
-  isUpPressed(): boolean;
-  isDownPressed(): boolean;
+  handle(): void;
 }
 
 class Right implements Input {
-  isRightPressed() { return true; }
-  isLeftPressed() { return false; }
-  isUpPressed() { return false; }
-  isDownPressed() { return false; }
+  handleInput() {
+    if (false)
+      moveHorizontal(-1);
+    else if (true)
+      moveHorizontal(1);
+    else if (false)
+      moveVertical(-1);
+    else if (false)
+      moveVertical(1);
+  }
 }
 
 class Left implements Input {
-  isRightPressed() { return false; }
-  isLeftPressed() { return true; }
-  isUpPressed() { return false; }
-  isDownPressed() { return false; }
+  handleInput() {
+    if (true)
+      moveHorizontal(-1);
+    else if (false)
+      moveHorizontal(1);
+    else if (false)
+      moveVertical(-1);
+    else if (false)
+      moveVertical(1);
+  }
 }
 
 class Up implements Input {
-  isRightPressed() { return false; }
-  isLeftPressed() { return false; }
-  isUpPressed() { return true; }
-  isDownPressed() { return false; }
+  handleInput() {
+    if (false)
+      moveHorizontal(-1);
+    else if (false)
+      moveHorizontal(1);
+    else if (true)
+      moveVertical(-1);
+    else if (false)
+      moveVertical(1);
+  }
 }
 
 class Down implements Input {
-  isRightPressed() { return false; }
-  isLeftPressed() { return false; }
-  isUpPressed() { return false; }
-  isDownPressed() { return true; }
+  handleInput() {
+    if (false)
+      moveHorizontal(-1);
+    else if (false)
+      moveHorizontal(1);
+    else if (false)
+      moveVertical(-1);
+    else if (true)
+      moveVertical(1);
+  }
 }
 
 let playerx = 1;
