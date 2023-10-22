@@ -14,7 +14,7 @@ enum RawTile {
   KEY2, LOCK2
 }
 
-interface Tile2 {
+interface Tile {
   isAir(): boolean;
   isFlux(): boolean;
   isUnbreakable(): boolean;
@@ -28,7 +28,7 @@ interface Tile2 {
   isLock1(): boolean;
   isLock2(): boolean;
 }
-class Air implements Tile2 {
+class Air implements Tile {
   isAir() {return true;}
   isFlux() {return false;}
   isUnbreakable() {return false;}
@@ -43,7 +43,7 @@ class Air implements Tile2 {
   isLock2() {return false;}
 }
 
-class Flux implements Tile2 {
+class Flux implements Tile {
   isAir() {return false;}
   isFlux() {return true;}
   isUnbreakable() {return false;}
@@ -58,7 +58,7 @@ class Flux implements Tile2 {
   isLock2() {return false;}
 }
 
-class Unbreakable implements Tile2 {
+class Unbreakable implements Tile {
   isAir() {return false;}
   isFlux() {return false;}
   isUnbreakable() {return true;}
@@ -73,7 +73,7 @@ class Unbreakable implements Tile2 {
   isLock2() {return false;}
 }
 
-class Player implements Tile2 {
+class Player implements Tile {
   isAir() {return false;}
   isFlux() {return false;}
   isUnbreakable() {return false;}
@@ -88,7 +88,7 @@ class Player implements Tile2 {
   isLock2() {return false;}
 }
 
-class Stone implements Tile2 {
+class Stone implements Tile {
   isAir() {return false;}
   isFlux() {return false;}
   isUnbreakable() {return false;}
@@ -103,7 +103,7 @@ class Stone implements Tile2 {
   isLock2() {return false;}
 }
 
-class FallingStone implements Tile2 {
+class FallingStone implements Tile {
   isAir() {return false;}
   isFlux() {return false;}
   isUnbreakable() {return false;}
@@ -118,7 +118,7 @@ class FallingStone implements Tile2 {
   isLock2() {return false;}
 }
 
-class Box implements Tile2 {
+class Box implements Tile {
   isAir() {return false;}
   isFlux() {return false;}
   isUnbreakable() {return false;}
@@ -133,7 +133,7 @@ class Box implements Tile2 {
   isLock2() {return false;}
 }
 
-class FallingBox implements Tile2 {
+class FallingBox implements Tile {
   isAir() {return false;}
   isFlux() {return false;}
   isUnbreakable() {return false;}
@@ -148,7 +148,7 @@ class FallingBox implements Tile2 {
   isLock2() {return false;}
 }
 
-class Key1 implements Tile2 {
+class Key1 implements Tile {
   isAir() {return false;}
   isFlux() {return false;}
   isUnbreakable() {return false;}
@@ -163,7 +163,7 @@ class Key1 implements Tile2 {
   isLock2() {return false;}
 }
 
-class Key2 implements Tile2 {
+class Key2 implements Tile {
   isAir() {return false;}
   isFlux() {return false;}
   isUnbreakable() {return false;}
@@ -178,7 +178,7 @@ class Key2 implements Tile2 {
   isLock2() {return false;}
 }
 
-class Lock1 implements Tile2 {
+class Lock1 implements Tile {
   isAir() {return false;}
   isFlux() {return false;}
   isUnbreakable() {return false;}
@@ -193,7 +193,7 @@ class Lock1 implements Tile2 {
   isLock2() {return false;}
 }
 
-class Lock2 implements Tile2 {
+class Lock2 implements Tile {
   isAir() {return false;}
   isFlux() {return false;}
   isUnbreakable() {return false;}
@@ -253,10 +253,20 @@ let map: Tile[][] = [
 
 let inputs: Input[] = [];
 
-function remove(tile: Tile) {
+function removeLock1() {
   for (let y = 0; y < map.length; y++) {
     for (let x = 0; x < map[y].length; x++) {
-      if (map[y][x] === tile) {
+      if (map[y][x].isLock1()) {
+        map[y][x] = new Air();
+      }
+    }
+  }
+}
+
+function removeLock2() {
+  for (let y = 0; y < map.length; y++) {
+    for (let x = 0; x < map[y].length; x++) {
+      if (map[y][x].isLock2()) {
         map[y][x] = new Air();
       }
     }
@@ -281,10 +291,10 @@ function moveHorizontal(dx: number) {
     map[playery][playerx + dx + dx] = map[playery][playerx + dx];
     moveToTile(playerx + dx, playery);
   } else if (map[playery][playerx + dx].isKey1()) {
-    remove(new Lock1());
+    removeLock1();
     moveToTile(playerx + dx, playery);
   } else if (map[playery][playerx + dx] .isKey2()) {
-    remove(new Lock2());
+    removeLock2();
     moveToTile(playerx + dx, playery);
   }
 }
@@ -294,10 +304,10 @@ function moveVertical(dy: number) {
     || map[playery + dy][playerx].isAir()) {
     moveToTile(playerx, playery + dy);
   } else if (map[playery + dy][playerx].isKey1()) {
-    remove(new Lock1());
+    removeLock1();
     moveToTile(playerx, playery + dy);
   } else if (map[playery + dy][playerx].isKey2()) {
-    remove(new Lock2());
+    removeLock2();
     moveToTile(playerx, playery + dy);
   }
 }
