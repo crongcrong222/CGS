@@ -257,47 +257,47 @@ function remove(tile: Tile) {
   for (let y = 0; y < map.length; y++) {
     for (let x = 0; x < map[y].length; x++) {
       if (map[y][x] === tile) {
-        map[y][x] = new Air();
+        map[y][x] = Tile.AIR;
       }
     }
   }
 }
 
 function moveToTile(newx: number, newy: number) {
-  map[playery][playerx] = new Air();
-  map[newy][newx] = new Player();
+  map[playery][playerx] = Tile.AIR;
+  map[newy][newx] = Tile.PLAYER;
   playerx = newx;
   playery = newy;
 }
 
 function moveHorizontal(dx: number) {
-  if (map[playery][playerx + dx].isFlux()
-    || map[playery][playerx + dx].isAir()) {
+  if (map[playery][playerx + dx] === Tile.FLUX
+    || map[playery][playerx + dx] === Tile.AIR) {
     moveToTile(playerx + dx, playery);
-  } else if ((map[playery][playerx + dx].isStone()
-    || map[playery][playerx + dx].isBox())
-    && map[playery][playerx + dx + dx].isAir()
-    && !map[playery + 1][playerx + dx].isAir()) {
+  } else if ((map[playery][playerx + dx] === Tile.STONE
+    || map[playery][playerx + dx] === Tile.BOX)
+    && map[playery][playerx + dx + dx] === Tile.AIR
+    && map[playery + 1][playerx + dx] !== Tile.AIR) {
     map[playery][playerx + dx + dx] = map[playery][playerx + dx];
     moveToTile(playerx + dx, playery);
-  } else if (map[playery][playerx + dx].isKey1()) {
-    remove(new Lock1());
+  } else if (map[playery][playerx + dx] === Tile.KEY1) {
+    remove(Tile.LOCK1);
     moveToTile(playerx + dx, playery);
-  } else if (map[playery][playerx + dx] .isKey2()) {
-    remove(new Lock2());
+  } else if (map[playery][playerx + dx] === Tile.KEY2) {
+    remove(Tile.LOCK2);
     moveToTile(playerx + dx, playery);
   }
 }
 
 function moveVertical(dy: number) {
-  if (map[playery + dy][playerx].isFlux()
-    || map[playery + dy][playerx].isAir()) {
+  if (map[playery + dy][playerx] === Tile.FLUX
+    || map[playery + dy][playerx] === Tile.AIR) {
     moveToTile(playerx, playery + dy);
-  } else if (map[playery + dy][playerx].isKey1()) {
-    remove(new Lock1());
+  } else if (map[playery + dy][playerx] === Tile.KEY1) {
+    remove(Tile.LOCK1);
     moveToTile(playerx, playery + dy);
-  } else if (map[playery + dy][playerx].isKey2()) {
-    remove(new Lock2());
+  } else if (map[playery + dy][playerx] === Tile.KEY2) {
+    remove(Tile.LOCK2);
     moveToTile(playerx, playery + dy);
   }
 }
@@ -324,18 +324,18 @@ function updateMap() {
 }
 
 function updateTile(x: number, y: number) {
-  if ((map[y][x].isStone() || map[y][x] .isFallingStone())
-    && map[y + 1][x].isAir()) {
-    map[y + 1][x] = new FallingStone();
-    map[y][x] = new Air();
-  } else if ((map[y][x].isBox()|| map[y][x].isFallingBox())
-    && map[y + 1][x].isAir()) {
-    map[y + 1][x] = new FallingBox();
-    map[y][x] = new Air();
-  } else if (map[y][x].isFallingStone()) {
-    map[y][x] = new Stone();
-  } else if (map[y][x].isFallingBox()) {
-    map[y][x] = new Box();
+  if ((map[y][x] === Tile.STONE || map[y][x] === Tile.FALLING_STONE)
+    && map[y + 1][x] === Tile.AIR) {
+    map[y + 1][x] = Tile.FALLING_STONE;
+    map[y][x] = Tile.AIR;
+  } else if ((map[y][x] === Tile.BOX || map[y][x] === Tile.FALLING_BOX)
+    && map[y + 1][x] === Tile.AIR) {
+    map[y + 1][x] = Tile.FALLING_BOX;
+    map[y][x] = Tile.AIR;
+  } else if (map[y][x] === Tile.FALLING_STONE) {
+    map[y][x] = Tile.STONE;
+  } else if (map[y][x] === Tile.FALLING_BOX) {
+    map[y][x] = Tile.BOX;
   }
 }
 
@@ -364,20 +364,20 @@ function drawMap(g: CanvasRenderingContext2D) {
 }
 
 function colorOfTile(g: CanvasRenderingContext2D, x: number, y: number) {
-  if (map[y][x].isFlux())
+  if (map[y][x] === Tile.FLUX)
     g.fillStyle = "#ccffcc";
-  else if (map[y][x].isUnbreakable())
+  else if (map[y][x] === Tile.UNBREAKABLE)
     g.fillStyle = "#999999";
-  else if (map[y][x].isStone() || map[y][x].isFallingStone())
+  else if (map[y][x] === Tile.STONE || map[y][x] === Tile.FALLING_STONE)
     g.fillStyle = "#0000cc";
-  else if (map[y][x].isBox() || map[y][x].isFallingBox())
+  else if (map[y][x] === Tile.BOX || map[y][x] === Tile.FALLING_BOX)
     g.fillStyle = "#8b4513";
-  else if (map[y][x].isKey1()|| map[y][x].isLock1())
+  else if (map[y][x] === Tile.KEY1 || map[y][x] === Tile.LOCK1)
     g.fillStyle = "#ffcc00";
-  else if (map[y][x].isKey2()|| map[y][x].isLock2())
+  else if (map[y][x] === Tile.KEY2 || map[y][x] === Tile.LOCK2)
     g.fillStyle = "#00ccff";
 
-  if (!map[y][x].isAir && !map[y][x].isPlayer())
+  if (map[y][x] !== Tile.AIR && map[y][x] !== Tile.PLAYER)
     g.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
 }
 
