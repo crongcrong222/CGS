@@ -28,7 +28,7 @@ interface Tile {
   isLock2(): boolean;
   isAir(): boolean;
 
-  color(g: CanvasRenderingContext2D): void;
+  draw(g: CanvasRenderingContext2D, x: number, y: number): void;
 }
 
 class Flux implements Tile {
@@ -69,8 +69,9 @@ class Flux implements Tile {
     return false;
   }
 
-  color(g: CanvasRenderingContext2D): void {
+  draw(g: CanvasRenderingContext2D, x: number, y: number): void {
     g.fillStyle = "#ccffcc";
+    g.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
   }
 }
 
@@ -112,8 +113,9 @@ class Unbreakable implements Tile {
     return false;
   }
   
-  color(g: CanvasRenderingContext2D): void {
+  draw(g: CanvasRenderingContext2D, x: number, y: number): void {
     g.fillStyle = "#999999";
+    g.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
   }
 }
 
@@ -155,7 +157,7 @@ class Player implements Tile {
     return false;
   }
 
-  color(g: CanvasRenderingContext2D): void {
+  draw(g: CanvasRenderingContext2D, x: number, y: number): void {
 
   }
 }
@@ -198,8 +200,9 @@ class Stone implements Tile {
     return false;
   }
 
-  color(g: CanvasRenderingContext2D): void {
+  draw(g: CanvasRenderingContext2D, x: number, y: number): void {
     g.fillStyle = "#0000cc";
+    g.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
   }
 }
 
@@ -241,8 +244,9 @@ class FallingStone implements Tile {
     return false;
   }
 
-  color(g: CanvasRenderingContext2D): void {
+  draw(g: CanvasRenderingContext2D, x: number, y: number): void {
     g.fillStyle = "#0000cc";
+    g.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
   }
 }
 
@@ -284,8 +288,9 @@ class Box implements Tile {
     return false;
   }
 
-  color(g: CanvasRenderingContext2D): void {
+  draw(g: CanvasRenderingContext2D, x: number, y: number): void {
     g.fillStyle = "#8b4513";
+    g.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
   }
 }
 
@@ -327,8 +332,9 @@ class FallingBox implements Tile {
     return false;
   }
 
-  color(g: CanvasRenderingContext2D): void {
+  draw(g: CanvasRenderingContext2D, x: number, y: number): void {
     g.fillStyle = "#8b4513";
+    g.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
   }
 }
 
@@ -370,8 +376,9 @@ class Key1 implements Tile {
     return false;
   }
 
-  color(g: CanvasRenderingContext2D): void {
+  draw(g: CanvasRenderingContext2D, x: number, y: number): void {
     g.fillStyle = "#ffcc00";
+    g.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
   }
 }
 
@@ -413,8 +420,9 @@ class Lock1 implements Tile {
     return false;
   }
 
-  color(g: CanvasRenderingContext2D): void {
+  draw(g: CanvasRenderingContext2D, x: number, y: number): void {
     g.fillStyle = "#ffcc00";
+    g.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
   }
 }
 
@@ -456,8 +464,9 @@ class Key2 implements Tile {
     return false;
   }
 
-  color(g: CanvasRenderingContext2D): void {
+  draw(g: CanvasRenderingContext2D, x: number, y: number): void {
     g.fillStyle = "#00ccff";
+    g.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
   }
 }
 
@@ -499,9 +508,12 @@ class Lock2 implements Tile {
     return false;
   }
 
-  color(g: CanvasRenderingContext2D): void {
+  
+  draw(g: CanvasRenderingContext2D, x: number, y: number): void {
     g.fillStyle = "#00ccff";
+    g.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
   }
+
 }
 
 class Air implements Tile {
@@ -541,10 +553,11 @@ class Air implements Tile {
   isAir(): boolean {
     return true;
   }
-
-  color(g: CanvasRenderingContext2D): void {
+  
+  draw(g: CanvasRenderingContext2D, x: number, y: number): void {
 
   }
+
 }
 
 enum RawInput {
@@ -741,15 +754,9 @@ function createGraphics() {
 function drawMap(g: CanvasRenderingContext2D) {
   for (let y = 0; y < map.length; y++) {
     for (let x = 0; x < map[y].length; x++) {
-      drawTile(g,x, y);
+      map[y][x].draw(g, x, y);
     }
   }
-}
-
-function drawTile(g: CanvasRenderingContext2D, x: number, y: number) {
-  map[y][x].color(g);
-  if (!map[y][x].isAir() && !map[y][x].isPlayer())
-  g.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
 }
 
 function drawPlayer(g: CanvasRenderingContext2D) {
