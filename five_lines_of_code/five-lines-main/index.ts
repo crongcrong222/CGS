@@ -190,6 +190,10 @@ class Player implements Tile {
 }
 
 class Stone implements Tile {
+  private falling: boolean;
+  constructor() {
+    this.falling = false;
+  }
   isFlux() {
     return false;
   }
@@ -236,16 +240,23 @@ class Stone implements Tile {
   isPushable() { return true; }
 
   moveHorizontal(dx: number) {
-    if(map[playery][playerx + dx + dx].isAir()
+    if (this.isFallingStone() == false) {
+      if(map[playery][playerx + dx + dx].isAir()
     && !map[playery + 1][playerx + dx].isAir()) {
     map[playery][playerx + dx + dx] = map[playery][playerx + dx];
     moveToTile(playerx + dx, playery);
+      }
     }
+    else if (this.isFallingStone() == true) {}
   }
   moveVertical(dy: number) {}
 }
 
 class FallingStone implements Tile {
+  private falling: boolean;
+  constructor() {
+    this.falling = true;
+  }
   isFlux() {
     return false;
   }
@@ -291,7 +302,16 @@ class FallingStone implements Tile {
   isEdible() { return false; }
   isPushable() { return false; }
 
-  moveHorizontal(dx: number) {}
+  moveHorizontal(dx: number) {
+    if (this.isFallingStone() == false) {
+      if(map[playery][playerx + dx + dx].isAir()
+    && !map[playery + 1][playerx + dx].isAir()) {
+    map[playery][playerx + dx + dx] = map[playery][playerx + dx];
+    moveToTile(playerx + dx, playery);
+      }
+    }
+    else if (this.isFallingStone() == true) {}
+  }
   moveVertical(dy: number) {}
 }
 
@@ -811,11 +831,11 @@ function updateMap() {
 }
 
 function updateTile(x: number, y: number) {
-  if ((map[y][x].isStone() || map[y][x].isFallingStone())
+  if ((map[y][x].isStony())
     && map[y + 1][x].isAir()) {
     map[y + 1][x] = new FallingStone();
     map[y][x] = new Air();
-  } else if ((map[y][x].isBox() || map[y][x].isFallingBox())
+  } else if ((map[y][x].isBoxy())
     && map[y + 1][x].isAir()) {
     map[y + 1][x] = new FallingBox();
     map[y][x] = new Air();
