@@ -45,6 +45,9 @@ interface Tile {
 
   isStony(): boolean;
   isBoxy(): boolean;
+
+  drop(): void;
+  rest(): void;
 }
 class Falling implements FallingState {
   isFalling() {return true;}
@@ -128,6 +131,9 @@ class Flux implements Tile {
   isBoxy() {
     return false;
   }
+  drop() {}
+  rest() {}
+  
 }
 
 class Unbreakable implements Tile {
@@ -188,6 +194,8 @@ class Unbreakable implements Tile {
   isBoxy() {
     return false;
   }
+  drop() {}
+  rest() {}
 }
 
 class Player implements Tile {
@@ -247,6 +255,8 @@ class Player implements Tile {
   isBoxy() {
     return false;
   }
+  drop() {}
+  rest() {}
 }
 
 class Stone implements Tile {
@@ -308,6 +318,8 @@ class Stone implements Tile {
   isBoxy() {
     return false;
   }
+  drop() { this.falling = new Falling();}
+  rest() { this.falling = new Resting();}
 }
 
 class Box implements Tile {
@@ -369,6 +381,8 @@ class Box implements Tile {
   isBoxy() {
     return true;
   }
+  drop() {}
+  rest() {}
 }
 
 class Key1 implements Tile {
@@ -436,6 +450,8 @@ class Key1 implements Tile {
   isBoxy() {
     return false;
   }
+  drop() {}
+  rest() {}
 }
 
 class Lock1 implements Tile {
@@ -496,6 +512,8 @@ class Lock1 implements Tile {
   isBoxy() {
     return false;
   }
+  drop() {}
+  rest() {}
 }
 
 class Key2 implements Tile {
@@ -563,6 +581,8 @@ class Key2 implements Tile {
   isBoxy() {
     return false;
   }
+  drop() {}
+  rest() {}
 }
 
 class Lock2 implements Tile {
@@ -623,6 +643,8 @@ class Lock2 implements Tile {
   isBoxy() {
     return false;
   }
+  drop() {}
+  rest() {}
 }
 
 class Air implements Tile {
@@ -686,6 +708,8 @@ class Air implements Tile {
   isBoxy() {
     return false;
   }
+  drop() {}
+  rest() {}
 }
 
 enum RawInput {
