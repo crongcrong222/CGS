@@ -864,10 +864,8 @@ function updateTile(x: number, y: number) {
     && map[y + 1][x].isAir()) {
     map[y + 1][x] = new Box(new Falling());
     map[y][x] = new Air();
-  } else if (map[y][x].isFallingStone()) {
-    map[y][x] = new Stone(new Resting());
-  } else if (map[y][x].isFallingBox()) {
-    map[y][x] = new Box(new Resting());
+  } else if (map[y][x].isFalling()) {
+    map[y][x].rest();
   }
 }
 
