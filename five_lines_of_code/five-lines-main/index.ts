@@ -51,6 +51,27 @@ interface Tile {
 
   update(X : number, y : number): void;
 }
+
+class FallStrategy {
+  constructor(private falling: FallingState)
+  {
+
+  }
+  getFalling() { return this.falling;}
+  isFalling() { return this.falling; }
+  update(tile : Tile, x : number, y : number) {
+    this.falling = map[y + 1][x].isAir() ? new Falling() : new Resting();
+  this.drop(tile, x, y);
+  }
+  private drop(tile : Tile, x : number, y : number)
+  {
+    if(this.falling.isFalling()) {
+      map[y + 1][x] = tile;
+      map[y][x] = new Air();
+    }
+  }
+}
+
 class Falling implements FallingState {
   isFalling() {return true;}
   isReseting() {return false;}
@@ -268,8 +289,11 @@ class Player implements Tile {
 }
 
 class Stone implements Tile {
-  constructor(private falling: FallingState) {
+  private falling: FallingState;
+  private fallStrategy: FallStrategy;
+  constructor(falling: FallingState) {
     this.falling = falling;
+    this.fallStrategy = new FallStrategy(falling);
   }
   isFlux() {
     return false;
@@ -317,7 +341,7 @@ class Stone implements Tile {
   isPushable() { return true; }
 
   moveHorizontal(dx: number) {
-    this.falling.moveHorizontal(this, dx);
+    this.fallStrategy.getFalling().moveHorizontal(this, dx);
   }
   moveVertical(dy: number) {}
   isStony() {
@@ -330,19 +354,16 @@ class Stone implements Tile {
   rest() { this.falling = new Resting();}
 
   update(x : number, y : number) {
-    if (map[y + 1][x].isAir()) {
-      this.falling = new Falling();
-      map[y + 1][x] = this;
-      map[y][x] = new Air();
-    } else if (map[y][x].isFalling()) {
-      map[y][x].rest();
-    }
+   this.fallStrategy.update(this, x, y);
   }
 }
 
 class Box implements Tile {
-  constructor(private falling: FallingState) {
+  private falling: FallingState;
+  private fallStrategy: FallStrategy;
+  constructor(falling: FallingState) {
     this.falling = falling;
+    this.fallStrategy = new FallStrategy(falling);
   }
   isFlux() {
     return false;
@@ -390,7 +411,7 @@ class Box implements Tile {
   isPushable() { return true; }
 
   moveHorizontal(dx: number) {
-    this.falling.moveHorizontal(this, dx);
+    this.fallStrategy.getFalling().moveHorizontal(this, dx);
   }
   moveVertical(dy: number) {}
   isStony() {
@@ -403,14 +424,8 @@ class Box implements Tile {
   rest() {}
 
   update(x : number, y : number) {
-    if (map[y + 1][x].isAir()) {
-      this.falling = new Falling();
-      map[y + 1][x] = this;
-      map[y][x] = new Air();
-    } else if (map[y][x].isFalling()) {
-      map[y][x].rest();
-    }
-  }
+    this.fallStrategy.update(this, x, y);
+   }
 }
 
 class Key1 implements Tile {
