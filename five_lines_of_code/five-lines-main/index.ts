@@ -49,7 +49,9 @@ interface Tile {
   drop(): void;
   rest(): void;
 
-  update(X : number, y : number): void; 
+  update(X : number, y : number): void;
+
+  getBlockOnTopState() : FallingState;
 }
 
 interface RemoveStrategy {
@@ -76,10 +78,10 @@ class FallStrategy {
   moveHorizontal(tile : Tile, dx : number) {
     this.falling.moveHorizontal(tile, dx);
   }
-  private getFalling() { return this.falling;}
   isFalling() { return this.falling; }
   update(tile : Tile, x : number, y : number) {
-    this.falling = map[y + 1][x].isAir() ? new Falling() : new Resting();
+    this.falling = map[y + 1][x].getBlockOnTopState();
+     map[y + 1][x].isAir() ? new Falling() : new Resting();
   this.drop(tile, x, y);
   }
   private drop(tile : Tile, x : number, y : number)
@@ -177,7 +179,6 @@ class Flux implements Tile {
   rest() {}
 
   update(x : number, y : number) {}
-  
 }
 
 class Unbreakable implements Tile {
@@ -375,6 +376,8 @@ class Stone implements Tile {
   update(x : number, y : number) {
    this.fallStrategy.update(this, x, y);
   }
+
+  getBlockOnTopState() {return new Resting();}
 }
 
 class Box implements Tile {
@@ -647,6 +650,10 @@ class Air implements Tile {
   rest() {}
 
   update(x : number, y : number) {}
+
+  getBlockOnTopState() {
+    return new Falling();
+  }
 }
 
 enum RawInput {
