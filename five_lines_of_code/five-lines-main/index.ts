@@ -19,6 +19,8 @@ interface FallingState{
   isReseting(): boolean;
 
   moveHorizontal(tile: Tile, dx: number): void;
+
+  drop(tile : Tile, x : number, y : number) : void;
 }
 
 interface Tile {
@@ -82,14 +84,7 @@ class FallStrategy {
   update(tile : Tile, x : number, y : number) {
     this.falling = map[y + 1][x].getBlockOnTopState();
      map[y + 1][x].isAir() ? new Falling() : new Resting();
-  this.drop(tile, x, y);
-  }
-  private drop(tile : Tile, x : number, y : number)
-  {
-    if(this.falling.isFalling()) {
-      map[y + 1][x] = tile;
-      map[y][x] = new Air();
-    }
+  this.falling.drop(tile, x, y);
   }
 }
 
@@ -98,7 +93,11 @@ class Falling implements FallingState {
   isReseting() {return false;}
 
   moveHorizontal(tile: Tile, dx: number) {
-    
+  
+  }
+  drop(tile : Tile, x : number, y : number) {
+    map[y + 1][x] = tile;
+    map[y][x] = new Air();
   }
 }
 
@@ -112,6 +111,8 @@ class Resting implements FallingState {
     moveToTile(playerx + dx, playery);
       }
   }
+
+  drop(tile : Tile, x : number, y : number) {}
 }
 
 class Flux implements Tile {
