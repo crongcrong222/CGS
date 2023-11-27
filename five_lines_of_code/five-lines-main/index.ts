@@ -42,8 +42,8 @@ interface Tile {
   isEdible(): boolean;
   isPushable(): boolean;
 
-  moveHorizontal(dx : number): void;
-  moveVertical(dy : number): void;
+  moveHorizontal(player : Player, dx : number): void;
+  moveVertical(player : Player, dy : number): void;
 
   isStony(): boolean;
   isBoxy(): boolean;
@@ -246,7 +246,7 @@ class Unbreakable implements Tile {
   update(x : number, y : number) {}
 }
 
-class Player implements Tile {
+class PlayerTile implements Tile {
   private falling: boolean;
   constructor() {
     this.falling = false;
@@ -689,8 +689,17 @@ class Down implements Input {
   }
 }
 
-let playerx = 1;
-let playery = 1;
+class Player {
+  private x = 1;
+  private y = 1;
+  getX() { return this.x; }
+  getY() { return this.y; }
+  setX(x : number) {this.x = x; }
+  setY(y : number) {this.y = y; }
+}
+
+let player = new Player();
+
 let rawMap: RawTile[][] = [
   [2, 2, 2, 2, 2, 2, 2, 2],
   [2, 3, 0, 1, 1, 2, 0, 2],
@@ -761,11 +770,11 @@ function remove(shouldRemove : RemoveStrategy) {
   }
 }
 
-function moveToTile(newx: number, newy: number) {
-  map[playery][playerx] = new Air();
-  map[newy][newx] = new Player();
-  playerx = newx;
-  playery = newy;
+function moveToTile(player : Player, newx: number, newy: number) {
+  map[player.getY()][player.getX()] = new Air();
+  map[newy][newx] = new PlayerTile();
+  player.setX(newx);
+  player.setY(newy);
 }
 
 function moveHorizontal(dx: number) {
