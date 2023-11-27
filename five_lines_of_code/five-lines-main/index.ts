@@ -696,6 +696,11 @@ class Player {
   getY() { return this.y; }
   setX(x : number) {this.x = x; }
   setY(y : number) {this.y = y; }
+
+  draw(g : CanvasRenderingContext2D) {
+    g.fillStyle = "#ff0000";
+    g.fillRect(this.x * TILE_SIZE, this.y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+  }
 }
 
 let player = new Player();
@@ -842,9 +847,8 @@ function drawMap(g: CanvasRenderingContext2D) {
   }
 }
 
-function drawPlayer(g: CanvasRenderingContext2D) {
-  g.fillStyle = "#ff0000";
-  g.fillRect(playerx * TILE_SIZE, playery * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+function drawPlayer(player : Player, g: CanvasRenderingContext2D) {
+  player.draw(g);
 }
 function gameLoop() {
   let before = Date.now();
