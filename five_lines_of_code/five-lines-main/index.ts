@@ -49,7 +49,7 @@ interface Tile {
   drop(): void;
   rest(): void;
 
-  update(X : number, y : number): void;
+  update(X : number, y : number): void; 
 }
 
 interface RemoveStrategy {
