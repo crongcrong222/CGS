@@ -42,8 +42,8 @@ interface Tile {
   isEdible(): boolean;
   isPushable(): boolean;
 
-  moveHorizontal(player : Player, dx : number): void;
-  moveVertical(player : Player, dy : number): void;
+  moveHorizontal(map : Map, player : Player, dx : number): void;
+  moveVertical(map : Map, player : Player, dy : number): void;
 
   isStony(): boolean;
   isBoxy(): boolean;
@@ -51,7 +51,7 @@ interface Tile {
   drop(): void;
   rest(): void;
 
-  update(X : number, y : number): void;
+  update(map : Map, X : number, y : number): void;
 
   getBlockOnTopState() : FallingState;
 }
@@ -104,12 +104,8 @@ class Falling implements FallingState {
 class Resting implements FallingState {
   isFalling() {return false;}
   isReseting() {return true;}
-  moveHorizontal(tile: Tile, dx: number) {
-      if(map[playery][playerx + dx + dx].isAir()
-    && !map[playery + 1][playerx + dx].isAir()) {
-    map[playery][playerx + dx + dx] = map[playery][playerx + dx];
-    moveToTile(playerx + dx, playery);
-      }
+  moveHorizontal(player : Player, tile: Tile, dx: number) {
+      player.pushHorizontal(tile, dx);
   }
 
   drop(tile : Tile, x : number, y : number) {}
@@ -692,16 +688,31 @@ class Down implements Input {
 class Player {
   private x = 1;
   private y = 1;
-  getX() { return this.x; }
-  getY() { return this.y; }
-  setX(x : number) {this.x = x; }
-  setY(y : number) {this.y = y; }
 
   draw(g : CanvasRenderingContext2D) {
     g.fillStyle = "#ff0000";
     g.fillRect(this.x * TILE_SIZE, this.y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
   }
+  moveHorizontal(dx : number) {
+    map[this.x][this.x + dx].moveHorizontal(this, dx);
+  }
+  move(dx : number, dy : number) {
+    this.moveToTile(this.x + dx, this.y + dy);
+  }
+  pushHorizontal(tile : Tile, dx : number) {
+    if ( map[this.y][this.x+dx + dx].isAir() && !map[this.y + 1][this.x + dx].isAir()) {
+      map[this.y][this.x+dx +dx] = tile;
+      this.moveToTile(this.x+dx, this.y);
+    }
+  }
+  moveToTile(newx : number, newy : number) {
+    map[this.y][this.x] = new Air();
+    map[newy][newx] = new PlayerTile();
+    this.x = newx;
+    this.y = newy;
+  }
 }
+let map = new Map();
 
 let player = new Player();
 
@@ -714,7 +725,12 @@ let rawMap: RawTile[][] = [
   [2, 2, 2, 2, 2, 2, 2, 2],
 ];
 
-let map: Tile[][];
+class Map {
+  private map : Tile[][];
+  getMap() { return this.map; }
+  setMap(map : Tile[][]) { this.map = map; }
+}
+
 function assertExhausted(x: never): never {
   throw new Error("Unexpected object: " + x);
 }
@@ -766,10 +782,10 @@ function transformMap() {
 let inputs: Input[] = [];
 
 function remove(shouldRemove : RemoveStrategy) {
-  for (let y = 0; y < map.length; y++) {
-    for (let x = 0; x < map[y].length; x++) {
-      if (shouldRemove.check(map[y][x])) {
-        map[y][x] = new Air();
+  for (let y = 0; y < map.getMap().length; y++) {
+    for (let x = 0; x < map.getMap()[y].length; x++) {
+      if (shouldRemove.check(map.getMap()[y][x])) {
+        map.getMap()[y][x] = new Air();
       }
     }
   }
