@@ -3,15 +3,100 @@ const TILE_SIZE = 30;
 const FPS = 30;
 const SLEEP = 1000 / FPS;
 
-enum RawTile {
-  AIR,
-  FLUX,
-  UNBREAKABLE,
-  PLAYER,
-  STONE, FALLING_STONE,
-  BOX, FALLING_BOX,
-  KEY1, LOCK1,
-  KEY2, LOCK2
+interface RawTileValue {
+  transform() : Tile;
+}
+class AirValue implements RawTileValue {
+  transform() {
+    return new Air();
+  }
+}
+class FluxValue implements RawTileValue {
+  transform() {
+    return new Flux();
+  }
+}
+class UnbreakableValue implements RawTileValue {
+  transform() {
+    return new Unbreakable();
+  }
+}
+class PlayerValue implements RawTileValue {
+  transform() {
+    return new Player();
+  }
+}
+class StoneValue implements RawTileValue {
+  transform() {
+    return new Stone(new Resting());
+  }
+}
+class FallingStoneValue implements RawTileValue {
+  transform() {
+    return new Stone(new Falling());
+  }
+}
+class BoxValue implements RawTileValue {
+  transform() {
+    return new Box(new Resting());
+  }
+}
+class FallingBoxValue implements RawTileValue {
+  transform() {
+    return new Box(new Faaling());
+  }
+}
+class Key1Value implements RawTileValue {
+  transform() {
+    return new Key(YELLOW_KEY);
+  }
+}
+class Lock1Value implements RawTileValue {
+  transform() {
+    return new Lock1(YELLOW_KEY);
+  }
+}
+class Key2Value implements RawTileValue {
+  transform() {
+    return new Key(YELLOW_KEY);
+  }
+}
+class Lock2Value implements RawTileValue {
+  transform() {
+    return new Lock1(YELLOW_KEY);
+  }
+}
+
+class RawTile2 {
+  static readonly AIR = new RawTile2(new AirValue());
+  static readonly FLUX = new RawTile2(new FluxValue());
+  static readonly UNBREAKABLE = new RawTile2(new UnbreakableValue());
+  static readonly PLAYER = new RawTile2(new PlayerValue());
+  static readonly STONE = new RawTile2(new StoneValue());
+  static readonly FALLING_STONE = new RawTile2(new FallingStoneValue());
+  static readonly BOX = new RawTile2(new BoxValue());
+  static readonly FALLING_BOX = new RawTile2(new FallingBoxValue());
+  static readonly KEY1 = new RawTile2(new Key1Value());
+  static readonly LOCK1 = new RawTile2(new Lock1Value());
+  static readonly KEY2 = new RawTile2(new Key2Value());
+  static readonly LOCK2 = new RawTile2(new Lock2Value());
+  transform() {
+    return this.value.transform();
+  }
+  //
+  //
+  //
+  private constructor(private value : RawTileValue) {}
+}
+enum RAW_TILES {
+  RawTile2.AIR,
+  RawTile2.FLUX,
+  RawTile2.UNBREAKABLE,
+  RawTile2.PLAYER,
+  RawTile2.STONE, RawTile2.FALLING_STONE,
+  RawTile2.BOX, RawTile2.FALLING_BOX,
+  RawTile2.KEY1, RawTile2.LOCK1,
+  RawTile2.KEY2, RawTile2.LOCK2
 }
 
 interface FallingState{
@@ -22,6 +107,7 @@ interface FallingState{
 
   drop(map : Map, tile : Tile, x : number, y : number) : void;
 }
+
 
 interface Tile {
   isFlux(): boolean;
@@ -763,7 +849,7 @@ class Map {
     for (let y = 0; y < rawMap.length; y++) {
       this.map[y] = new Array(rawMap[y].length);
       for (let x = 0; x < rawMap[y].length; x++) {
-        this.map[y][x] = transformTile(rawMap[y][x]);
+        this.map[y][x] = transformTile(RawTile2[rawMap[y][x]]);
       }
     }
   }
@@ -821,22 +907,9 @@ class KeyConfiguration {
 const YELLOW_KEY = new KeyConfiguration("#ffcc00", true, new RemoveLock1());
 
 
-function transformTile(tile: RawTile) {
-  switch (tile) {
-    case RawTile.AIR: return new Air();
-    case RawTile.UNBREAKABLE: return new Unbreakable();
-    case RawTile.PLAYER: return new Player();
-    case RawTile.BOX: return new Box(new Resting());
-    case RawTile.FALLING_BOX: new Box(new Falling());
-    case RawTile.STONE: return new Stone(new Resting());
-    case RawTile.FALLING_STONE: return new Stone(new Falling());
-    case RawTile.KEY1: return new Key(YELLOW_KEY);
-    case RawTile.LOCK1: return new Lock1(YELLOW_KEY);
-    case RawTile.KEY2: return new Key(YELLOW_KEY);
-    case RawTile.LOCK2: return new Lock1(YELLOW_KEY);
-    case RawTile.FLUX: return new Flux();
-    default: return assertExhausted(tile);
-  }
+function transformTile(tile: RawTile2) {
+    return tile.transform();
+
 }
 
 
